@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tienda Veterinaria</title>
+    <link rel="stylesheet" href="./css/style.css">
+  </head>
+  <body>
+    <header>
+      <div class="logo">
+        <img src="logo.png" alt="Logo de la tienda">
+        <h1>Tienda Veterinaria</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#">Inicio</a></li>
+          <li><a href="#">Productos</a></li>
+          <li><a href="#">Contacto</a></li>
+          <li><a href="#">Carrito</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section class="banner">
+        <img src="banner.png" alt="Banner promocional">
+        <h2>Descubre nuestros productos destacados</h2>
+        <a href="#" class="boton-accion">Ver productos</a>
+      </section>
+      <section class="productos">
+        <h2>Nuestros productos</h2>
+        <ul>
+          <li>
+            <img src="producto1.png" alt="Producto 1">
+            <h3>Producto 1</h3>
+            <p>descripcion</p>
+            <span class="precio">$10000</span>
+            <button>Agregar al carrito</button>
+          </li>
+          <li>
+            <img src="producto2.png" alt="Producto 2">
+            <h3>Producto 2</h3>
+            <p>descripcion</p>
+            <span class="precio">$15000</span>
+            <button>Agregar al carrito</button>
+          </li>
+          <li>
+            <img src="producto3.png" alt="Producto 3">
+            <h3>Producto 3</h3>
+            <p>descripcion</p>
+            <span class="precio">$20000</span>
+            <button>Agregar al carrito</button>
+          </li>
+        </ul>
+      </section>
+      <section class="carrito">
+        <h2>Carrito de compras</h2>
+        <ul>
+          <!-- Aquí se mostrarán los productos agregados al carrito -->
+        </ul>
+        <p>Total: $<span class="total"></span></p>
+        <button class="vaciar-carrito">Vaciar carrito</button>
+        <button class="realizar-pedido">Realizar pedido</button>
+      </section>
+    </main>
+    <footer>
+      <p>Derechos reservados &copy; Tienda Veterinaria</p>
+    </footer>
+    <script>
+      // Obtener los botones "Agregar al carrito"
+const agregarBotones = document.querySelectorAll(".productos button");
+
+// Agregar un evento "click" a cada botón
+agregarBotones.forEach((boton) => {
+  boton.addEventListener("click", agregarAlCarrito);
+});
+
+// Función para agregar un producto al carrito
+function agregarAlCarrito(event) {
+  const boton = event.target;
+  const item = boton.closest("li");
+
+  // Obtener los datos del producto
+  const productoNombre = item.querySelector("h3").textContent;
+  const productoPrecio = item.querySelector(".precio").textContent;
+
+  // Crear un objeto con los datos del producto
+  const producto = {
+    nombre: productoNombre,
+    precio: productoPrecio,
+    cantidad: 1,
+  };
+
+  // Verificar si el producto ya existe en el carrito
+  const carritoItems = document.querySelectorAll(".carrito li");
+  for (let i = 0; i < carritoItems.length; i++) {
+    const itemNombre = carritoItems[i].querySelector(".nombre").textContent;
+    if (itemNombre === productoNombre) {
+      const itemCantidad = carritoItems[i].querySelector(".cantidad");
+      itemCantidad.value++;
+      actualizarTotal();
+      return;
+    }
+  }
+
+  // Si el producto no existe en el carrito, agregarlo
+  const carrito = document.querySelector(".carrito ul");
+  const elemento = document.createElement("li");
+  elemento.innerHTML = `
+    <span class="nombre">${producto.nombre}</span>
+    <span class="precio">${producto.precio}</span>
+    <input type="number" class="cantidad" value="${producto.cantidad}" min="1">
+    <button class="eliminar">Eliminar</button>
+  `;
+  carrito.appendChild(elemento);
+
+  // Agregar un evento "click" al botón "Eliminar"
+  const botonEliminar = elemento.querySelector(".eliminar");
+  botonEliminar.addEventListener("click", eliminarDelCarrito);
+
+  // Agregar un evento "change" al input "Cantidad"
+  const inputCantidad = elemento.querySelector(".cantidad");
+  inputCantidad.addEventListener("change", actualizarCantidad);
+
+  actualizarTotal();
+}
+
+// Función para eliminar un producto del carrito
+function eliminarDelCarrito(event) {
+  const boton = event.target;
+  boton.closest("li").remove();
+  actualizarTotal();
+}
+
+// Función para actualizar la cantidad de un producto en el carrito
+function actualizarCantidad(event) {
+  const input = event.target;
+  if (input.value <= 0) {
+    input.closest("li").remove();
+  }
+  actualizarTotal();
+}
+
+// Función para actualizar el total del carrito
+function actualizarTotal() {
+  const carritoItems = document.querySelectorAll(".carrito li");
+  let total = 0;
+  for (let i = 0; i < carritoItems.length; i++) {
+    const item = carritoItems[i];
+    const precio = item.querySelector(".precio").textContent.replace("$", "");
+    const cantidad = item.querySelector(".cantidad").value;
+    total += precio * cantidad;
+  }
+  const carritoTotal = document.querySelector(".carrito-total");
+  carritoTotal.textContent = `$${total.toFixed(2)}`;
+}
+
+    </script>
+      
+    
+  </body>
+</html>
